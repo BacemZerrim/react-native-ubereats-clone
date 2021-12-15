@@ -1,34 +1,11 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Divider } from "react-native-elements";
+import { useDispatch, useSelector } from "react-redux";
 
-const foods = [
-  {
-    title: "Item title",
-    description: "Item description",
-    price: "Item price range",
-    image:
-      "https://sonomamarket.net/media/images/10/03/beef-lasagna-square.jpg",
-  },  {
-    title: "Item title",
-    description: "Item description",
-    price: "Item price range",
-    image:
-      "https://sonomamarket.net/media/images/10/03/beef-lasagna-square.jpg",
-  },  {
-    title: "Item title",
-    description: "Item description",
-    price: "Item price range",
-    image:
-      "https://sonomamarket.net/media/images/10/03/beef-lasagna-square.jpg",
-  },  {
-    title: "Item title",
-    description: "Item description",
-    price: "Item price range",
-    image:
-      "https://sonomamarket.net/media/images/10/03/beef-lasagna-square.jpg",
-  },
-];
+
+
 const styles = StyleSheet.create({
   menuItemStyle: {
     flexDirection: "row",
@@ -42,23 +19,50 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function MenuItems() {
-  return (
+export default function MenuItems({restaurantName, foods, hideCheckbox}) {
+  
+  const dispatch = useDispatch();
+  const selectItem = (item, checkboxValue) =>
+  dispatch({
+    type:"ADD_TO_CART",
+    payload:{
+      ...item,
+      restaurantName:restaurantName,
+      checkboxValue: checkboxValue,
+      },
+  });
+
+  const cartItems= useSelector(
+    state=>state.cartReducer.selectedItems.items
+    );
+  
+    const isFoodInCart=(food,cartItems)=>
+      Boolean(cartItems.find((item)=>item.title===food.title));
+    
+
+   return (
     <ScrollView showsVerticalScrollIndicator={false}>
     {foods.map((food, index) => (
       <View Key={index}>
     <View  style={styles.menuItemStyle}>
+      {hideCheckbox ? (<></>) : (<BouncyCheckbox
+        iconStyle={{borderColor:"lightgray",borderRadius:0}}
+        fillColor="green"
+        onPress={(checkboxValue)=>selectItem(food, checkboxValue)}
+        isChecked={isFoodInCart(food,cartItems)}
+        />
+        )}
       <FoodInfo food={food}></FoodInfo>
       <FoodImage food={food}></FoodImage>
     </View>
-    <Divider width={0.5} orientation="vertical"></Divider>
+    <Divider width={0.5} orientation="vertical" style={{marginHorizontal:20}}></Divider>
     </View>
     ))}
     </ScrollView>
     );
   }
 const FoodInfo = (props) => (
-  <View style={{ width: 240, justifyContent: "space-evenly" }}>
+  <View style={{ width: 200, justifyContent: "space-evenly" }}>
     <Text style={styles.titleStyle}>{props.food.title}</Text>
     <Text>{props.food.description}</Text>
     <Text>{props.food.price}</Text>

@@ -8,7 +8,7 @@ import Categories from "../components/home/Categories";
 import Finder from "../components/home/Finder";
 import HeaderTabs from "../components/home/HeaderTabs";
 
-export default function Home() {
+export default function Home({ navigation }) {
   const [restaurantData, setRestaurantData] = useState(localRestaurants);
   const [city, setCity] = useState("San Fransisco");
   const [activeTab, setActiveTab] = useState("Delivery");
@@ -47,7 +47,7 @@ export default function Home() {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Categories></Categories>
-        <RestaurantItems restaurantData={restaurantData}></RestaurantItems>
+        <RestaurantItems restaurantData={restaurantData} navigation={navigation}></RestaurantItems>
       </ScrollView>
 <Divider width={5}></Divider>
 <BottomTabs></BottomTabs>
